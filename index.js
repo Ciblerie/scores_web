@@ -1,5 +1,6 @@
 const express = require('express');
 const admin = require('firebase-admin');
+const path = require('path'); // Importation du module 'path'
 const app = express();
 
 // Charger la clé Firebase depuis une variable d'environnement
@@ -13,9 +14,12 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
+// Servir les fichiers statiques (comme index.html) depuis le dossier 'public'
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Route pour la racine
 app.get('/', (req, res) => {
-  res.send('Bienvenue sur l\'API de Scores Web !');
+  res.sendFile(path.join(__dirname, 'public', 'index.html')); // Servir le fichier index.html
 });
 
 // Endpoint pour récupérer les scores
