@@ -2,11 +2,12 @@ const express = require('express');
 const admin = require('firebase-admin');
 const app = express();
 
-// Initialisez Firebase Admin SDK
-const serviceAccount = require('./ciblerie-2-0-firebase-adminsdk-fbsvc-0841c3ec7b.json'); // Remplacez par le chemin vers votre clé privée Firebase
+// Lire la clé Firebase depuis une variable d'environnement
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://<ciblerie-2-0>.firebaseio.com" // Remplacez par votre URL Firestore
+  databaseURL: "https://ciblerie-2-0.firebaseio.com" // Remplacez par votre URL Firebase
 });
 
 const db = admin.firestore();
