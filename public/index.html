@@ -6,7 +6,7 @@
     <title>Classement des scores</title>
     <style>
         body {
-          background-color: #1d4ed8;
+          background: linear-gradient(135deg, #1d4ed8, #2563eb);
           font-family: Arial, sans-serif;
           color: #fff;
           text-align: center;
@@ -14,27 +14,43 @@
         }
         h1 {
           margin-bottom: 20px;
+          font-size: 24px;
         }
         table {
           margin: auto;
           width: 80%;
           border-collapse: collapse;
-          background-color: #fff;
-          color: #000;
+          background: transparent;
+          color: #fff;
         }
         th, td {
-          padding: 12px;
-          border: 1px solid #ccc;
+          padding: 8px;
+          border: none; /* Supprime les bordures */
+          text-align: center;
         }
         th {
-          background-color: #2563eb;
-          color: white;
+          font-size: 16px; /* Réduit la taille de la police */
+          background: rgba(255, 255, 255, 0.1); /* Donne un effet subtil */
+        }
+        td {
+          font-size: 14px; /* Réduit la taille de la police */
+        }
+        .small-date {
+          font-size: 10px; /* Taille très réduite pour la date */
+          opacity: 0.7; /* Rend la date moins visible */
         }
         button {
           margin-top: 20px;
-          padding: 10px 20px;
-          font-size: 16px;
+          padding: 8px 16px; /* Réduit la taille du bouton */
+          font-size: 14px; /* Réduit la taille de la police */
           cursor: pointer;
+          color: #fff;
+          background: rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.4);
+          border-radius: 4px;
+        }
+        button:hover {
+          background: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
@@ -44,6 +60,7 @@
     <thead>
     <tr>
         <th>Position</th>
+        <th>Date</th>
         <th>Pseudo</th>
         <th>Score</th>
     </tr>
@@ -63,13 +80,27 @@
         const response = await fetch(apiUrl);
         const data = await response.json();
 
+        // Trier les scores par ordre décroissant
+        data.sort((a, b) => b.score - a.score);
+
         const tbody = document.getElementById("scoreTableBody");
         tbody.innerHTML = ""; // Efface les anciennes lignes
 
         data.forEach((entry, index) => {
           const row = document.createElement("tr");
+
+          // Convertir le timestamp en une date lisible
+          const date = new Date(entry.timestamp).toLocaleString("fr-FR", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
           row.innerHTML = `
             <td>${index + 1}</td>
+            <td class="small-date">${date}</td>
             <td>${entry.pseudo || 'Anonyme'}</td>
             <td>${entry.score}</td>
           `;
@@ -84,13 +115,5 @@
     // Charge automatiquement au démarrage
     loadScores();
 </script>
-<!-- Ajouter Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-analytics.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore.js"></script>
-
-<!-- Lier le fichier app.js -->
-<script type="module" src="app.js"></script>
-
 </body>
 </html>
