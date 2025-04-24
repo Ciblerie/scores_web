@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classement des Scores</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    table { width: 50%; margin: 20px auto; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { background-color: #f4f4f4; }
+  </style>
+</head>
+<body>
+<h1>Classement des Scores</h1>
+<table>
+  <thead>
+  <tr>
+    <th>Pseudo</th>
+    <th>Score</th>
+    <th>Date</th>
+  </tr>
+  </thead>
+  <tbody id="scores-table">
+  <!-- Les scores seront insérés ici -->
+  </tbody>
+</table>
+<script>
+  async function fetchScores() {
+    try {
+      const response = await fetch('https://scores-web.onrender.com/scores'); // Ajoutez l'URL de votre backend Render
+      const scores = await response.json();
+
+      const tableBody = document.getElementById('scores-table');
+      tableBody.innerHTML = ''; // Réinitialise le tableau
+
+      scores.forEach(score => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${score.pseudo}</td>
+          <td>${score.score}</td>
+          <td>${new Date(score.timestamp._seconds * 1000).toLocaleString()}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des scores :', error);
+    }
+  }
+
+  // Charger les scores au chargement de la page
+  fetchScores();
+</script>
+</body>
+</html>
