@@ -39,19 +39,6 @@
           font-size: 10px; /* Taille très réduite pour la date */
           opacity: 0.7; /* Rend la date moins visible */
         }
-        button {
-          margin-top: 20px;
-          padding: 8px 16px; /* Réduit la taille du bouton */
-          font-size: 14px; /* Réduit la taille de la police */
-          cursor: pointer;
-          color: #fff;
-          background: rgba(255, 255, 255, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.4);
-          border-radius: 4px;
-        }
-        button:hover {
-          background: rgba(255, 255, 255, 0.3);
-        }
     </style>
 </head>
 <body>
@@ -70,10 +57,9 @@
     </tbody>
 </table>
 
-<button onclick="loadScores()">🔄 Mettre à jour</button>
-
 <script>
     const apiUrl = "/scores"; // Utilise l'API locale ou distante configurée via le backend Express
+    let currentScores = []; // Stocke les scores actuels pour détecter les changements
 
     async function loadScores() {
       try {
@@ -83,34 +69,40 @@
         // Trier les scores par ordre décroissant
         data.sort((a, b) => b.score - a.score);
 
-        const tbody = document.getElementById("scoreTableBody");
-        tbody.innerHTML = ""; // Efface les anciennes lignes
+        // Vérifie si les scores ont changé
+        if (JSON.stringify(data) !== JSON.stringify(currentScores)) {
+          currentScores = data; // Met à jour les scores actuels
+          const tbody = document.getElementById("scoreTableBody");
+          tbody.innerHTML = ""; // Efface les anciennes lignes
 
-        data.forEach((entry, index) => {
-          const row = document.createElement("tr");
+          data.forEach((entry, index) => {
+            const row = document.createElement("tr");
 
-          // Convertir le timestamp en une date lisible
-          const date = new Date(entry.timestamp).toLocaleString("fr-FR", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
+            // Convertir le timestamp en une date lisible
+            const date = new Date(entry.timestamp).toLocaleString("fr-FR", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
+            row.innerHTML = `
+              <td>${index + 1}</td>
+              <td class="small-date">${date}</td>
+              <td>${entry.pseudo || 'Anonyme'}</td>
+              <td>${entry.score}</td>
+            `;
+            tbody.appendChild(row);
           });
-
-          row.innerHTML = `
-            <td>${index + 1}</td>
-            <td class="small-date">${date}</td>
-            <td>${entry.pseudo || 'Anonyme'}</td>
-            <td>${entry.score}</td>
-          `;
-          tbody.appendChild(row);
-        });
+        }
       } catch (error) {
-        alert("Erreur lors du chargement des scores.");
-        console.error(error);
+        console.error("Erreur lors du chargement des scores :", error);
       }
     }
+
+    // Actualisation automatique toutes les 5 secondes
+    setInterval(loadScores, 5000);
 
     // Charge automatiquement au démarrage
     loadScores();
