@@ -35,9 +35,10 @@
         td {
           font-size: 14px;
         }
-        .small-date {
-          font-size: 10px;
-          opacity: 0.7;
+        .small-date, .small-days {
+          font-size: 10px; /* Taille réduite pour les jours dans le rang */
+          opacity: 0.7; /* Style moins visible */
+          border: none; /* Supprime les traits dans la colonne */
         }
     </style>
 </head>
@@ -103,7 +104,7 @@
 
           row.innerHTML = `
             <td>${index + 1}</td>
-            <td>${daysInRank || '-'}</td>
+            <td class="small-days">${daysInRank || '-'}</td>
             <td class="small-date">${date}</td>
             <td>${entry.pseudo || 'Anonyme'}</td>
             <td>${entry.score}</td>
