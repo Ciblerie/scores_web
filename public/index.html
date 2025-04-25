@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scores Globaux</title>
+    <title>Accueil</title>
     <style>
         body {
           background: linear-gradient(135deg, #1d4ed8, #2563eb);
@@ -12,36 +12,15 @@
           text-align: center;
           padding: 20px;
         }
-        table {
-          margin: auto;
-          width: 80%;
-          border-collapse: collapse;
-          background: rgba(255, 255, 255, 0.2);
-          color: #fff;
-          border-radius: 8px;
-          overflow: hidden;
-        }
-        th, td {
-          padding: 10px;
-          border: none;
-          text-align: center;
-        }
-        th {
-          background: rgba(255, 255, 255, 0.3);
-          font-size: 16px;
-        }
-        td {
-          font-size: 14px;
-        }
         a {
           text-decoration: none;
-          font-size: 16px;
+          font-size: 20px;
           color: #fff;
           background: rgba(255, 255, 255, 0.2);
-          padding: 10px 20px;
-          border-radius: 4px;
-          margin-top: 20px;
+          padding: 15px 30px;
+          border-radius: 8px;
           display: inline-block;
+          margin-top: 100px;
         }
         a:hover {
           background: rgba(255, 255, 255, 0.3);
@@ -49,41 +28,6 @@
     </style>
 </head>
 <body>
-<h1>📊 Scores Globaux</h1>
-<table>
-    <thead>
-    <tr>
-        <th>Position</th>
-        <th>Pseudo</th>
-        <th>Score</th>
-        <th>Date</th>
-    </tr>
-    </thead>
-    <tbody id="scoreTableBody">
-    <!-- Les scores seront ajoutés ici dynamiquement -->
-    </tbody>
-</table>
-<a href="dashboard.html">⬅️ Retour au Tableau de Bord</a>
-<script>
-    // Exemple de données fictives pour les tests
-    const globalScores = [
-        { position: 1, pseudo: "Player1", score: 200, date: "2025-04-20" },
-        { position: 2, pseudo: "Player2", score: 180, date: "2025-04-21" },
-        { position: 3, pseudo: "Player3", score: 150, date: "2025-04-22" },
-    ];
-
-    // Remplir le tableau des scores
-    const scoreTableBody = document.getElementById("scoreTableBody");
-    globalScores.forEach((entry) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${entry.position}</td>
-            <td>${entry.pseudo}</td>
-            <td>${entry.score}</td>
-            <td>${entry.date}</td>
-        `;
-        scoreTableBody.appendChild(row);
-    });
-</script>
+<a href="account.html">🔐 Accéder à Mon Compte</a>
 </body>
 </html>

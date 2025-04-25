@@ -70,6 +70,27 @@
         button:hover {
           background: rgba(255, 255, 255, 0.3);
         }
+        table {
+          margin: auto;
+          width: 80%;
+          border-collapse: collapse;
+          background: rgba(255, 255, 255, 0.2);
+          color: #fff;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        th, td {
+          padding: 10px;
+          border: none;
+          text-align: center;
+        }
+        th {
+          background: rgba(255, 255, 255, 0.3);
+          font-size: 16px;
+        }
+        td {
+          font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -78,7 +99,6 @@
     <div class="menu">
         <button class="menu-button">Naviguer</button>
         <div class="menu-content">
-            <a href="home.html">📊 Scores Globaux</a>
             <a href="user-scores.html">📈 Mes Scores & Statistiques</a>
             <a href="user-settings.html">⚙️ Gérer Mon Compte</a>
             <a href="events.html">📅 Événements</a>
@@ -87,13 +107,45 @@
     <button onclick="logout()">🔒 Déconnexion</button>
 </header>
 <main>
-    <p>Bienvenue sur votre tableau de bord. Choisissez une option dans le menu pour continuer.</p>
+    <h2>Classement des joueurs</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Position</th>
+            <th>Jours dans le rang</th>
+            <th>Date</th>
+            <th>Pseudo</th>
+            <th>Score</th>
+        </tr>
+        </thead>
+        <tbody id="scoreTableBody">
+        <!-- Les lignes seront ajoutées ici dynamiquement -->
+        </tbody>
+    </table>
 </main>
 <script>
-    function logout() {
-        alert("Vous avez été déconnecté !");
-        window.location.href = "account.html";
+    async function loadScores() {
+        const apiUrl = "/scores";
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        data.sort((a, b) => b.score - a.score);
+
+        const tbody = document.getElementById("scoreTableBody");
+        tbody.innerHTML = "";
+
+        data.forEach((entry, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${entry.daysInRank || '-'}</td>
+                <td>${new Date(entry.timestamp).toLocaleDateString("fr-FR")}</td>
+                <td>${entry.pseudo || 'Anonyme'}</td>
+                <td>${entry.score}</td>
+            `;
+            tbody.appendChild(row);
+        });
     }
+    loadScores();
 </script>
 </body>
 </html>
