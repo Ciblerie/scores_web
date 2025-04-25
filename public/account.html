@@ -48,14 +48,14 @@
           background: rgba(255, 255, 255, 0.4);
         }
         a {
-          margin-top: 20px;
-          display: inline-block;
           text-decoration: none;
           font-size: 16px;
           color: #fff;
           background: rgba(255, 255, 255, 0.2);
           padding: 10px 20px;
           border-radius: 4px;
+          margin-top: 20px;
+          display: inline-block;
         }
         a:hover {
           background: rgba(255, 255, 255, 0.3);
@@ -100,59 +100,5 @@
         </div>
     </form>
 </div>
-
-<!-- Lien retour -->
-<a href="index.html">🏠 Retour au classement</a>
-
-<script>
-    const loginSection = document.getElementById("loginSection");
-    const signupSection = document.getElementById("signupSection");
-    const switchToSignup = document.getElementById("switchToSignup");
-    const switchToLogin = document.getElementById("switchToLogin");
-
-    // Gestion de la navigation entre connexion et inscription
-    switchToSignup.addEventListener("click", (event) => {
-        event.preventDefault();
-        loginSection.style.display = "none";
-        signupSection.style.display = "block";
-    });
-
-    switchToLogin.addEventListener("click", (event) => {
-        event.preventDefault();
-        signupSection.style.display = "none";
-        loginSection.style.display = "block";
-    });
-
-    // Simuler une inscription
-    document.getElementById("signupForm").addEventListener("submit", (event) => {
-        event.preventDefault();
-        const username = document.getElementById("signupUsername").value;
-        const password = document.getElementById("signupPassword").value;
-        const confirmPassword = document.getElementById("signupConfirmPassword").value;
-
-        if (password !== confirmPassword) {
-            alert("Les mots de passe ne correspondent pas.");
-            return;
-        }
-
-        alert(`Compte créé avec succès pour ${username} ! Vous pouvez maintenant vous connecter.`);
-        signupSection.style.display = "none";
-        loginSection.style.display = "block";
-    });
-
-    // Simuler une connexion et redirection
-    document.getElementById("loginForm").addEventListener("submit", (event) => {
-        event.preventDefault();
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-
-        if (username && password) {
-            alert(`Bienvenue, ${username} ! Connexion réussie.`);
-            window.location.href = "dashboard.html"; // Redirige vers la page "dashboard.html"
-        } else {
-            alert("Veuillez remplir tous les champs.");
-        }
-    });
-</script>
 </body>
 </html>
