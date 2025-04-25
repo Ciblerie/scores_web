@@ -78,9 +78,9 @@
           data.forEach((entry, index) => {
             const row = document.createElement("tr");
 
-            // Convertir le timestamp au fuseau horaire de Paris (UTC+2)
+            // Convertir le timestamp au fuseau horaire de Paris (UTC+2 en été)
             const date = new Intl.DateTimeFormat("fr-FR", {
-              timeZone: "Europe/Paris",
+              timeZone: "Europe/Paris", // Fuseau horaire explicite
               year: "numeric",
               month: "short",
               day: "numeric",
