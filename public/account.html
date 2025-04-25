@@ -117,6 +117,12 @@
         signupSection.style.display = "none";
         loginSection.style.display = "block";
     });
+
+    // Redirection après soumission du formulaire de connexion
+    document.getElementById("loginForm").addEventListener("submit", (event) => {
+        event.preventDefault(); // Empêche le comportement par défaut du formulaire
+        window.location.href = "dashboard.html"; // Redirige vers le tableau de bord
+    });
 </script>
 </body>
 </html>
