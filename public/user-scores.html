@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Scores & Statistiques</title>
+    <style>
+        body {
+          background: linear-gradient(135deg, #1d4ed8, #2563eb);
+          font-family: Arial, sans-serif;
+          color: #fff;
+          text-align: center;
+          padding: 20px;
+        }
+        h1 {
+          margin-bottom: 20px;
+          font-size: 24px;
+        }
+        table {
+          margin: auto;
+          width: 80%;
+          border-collapse: collapse;
+          background: rgba(255, 255, 255, 0.2);
+          color: #fff;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        th, td {
+          padding: 10px;
+          border: none;
+          text-align: center;
+        }
+        th {
+          background: rgba(255, 255, 255, 0.3);
+          font-size: 16px;
+        }
+        td {
+          font-size: 14px;
+        }
+        .stats {
+          margin: 30px auto;
+          padding: 20px;
+          width: 80%;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 8px;
+          text-align: left;
+        }
+        a {
+          text-decoration: none;
+          font-size: 16px;
+          color: #fff;
+          background: rgba(255, 255, 255, 0.2);
+          padding: 10px 20px;
+          border-radius: 4px;
+          margin-top: 20px;
+          display: inline-block;
+        }
+        a:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+<h1>📈 Mes Scores & Statistiques</h1>
+
+<!-- Tableau des scores personnels -->
+<table>
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Score</th>
+        <th>Temps écoulé</th>
+        <th>Précision</th>
+    </tr>
+    </thead>
+    <tbody id="scoreTableBody">
+    <!-- Les lignes seront ajoutées ici dynamiquement -->
+    </tbody>
+</table>
+
+<!-- Section des statistiques générales -->
+<div class="stats">
+    <h2>📊 Statistiques Générales</h2>
+    <p><strong>Score Total :</strong> <span id="totalScore">0</span></p>
+    <p><strong>Meilleur Score :</strong> <span id="bestScore">0</span></p>
+    <p><strong>Précision Moyenne :</strong> <span id="averageAccuracy">0%</span></p>
+</div>
+
+<a href="dashboard.html">⬅️ Retour au Tableau de Bord</a>
+
+<script>
+    // Exemple de données fictives pour les tests
+    const userScores = [
+        { date: "2025-04-20", score: 150, time: "2m30s", accuracy: "85%" },
+        { date: "2025-04-21", score: 200, time: "3m10s", accuracy: "92%" },
+        { date: "2025-04-22", score: 180, time: "2m50s", accuracy: "88%" },
+    ];
+
+    // Remplir le tableau des scores
+    const scoreTableBody = document.getElementById("scoreTableBody");
+    userScores.forEach((entry) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${entry.date}</td>
+            <td>${entry.score}</td>
+            <td>${entry.time}</td>
+            <td>${entry.accuracy}</td>
+        `;
+        scoreTableBody.appendChild(row);
+    });
+
+    // Calculer les statistiques générales
+    const totalScore = userScores.reduce((sum, score) => sum + score.score, 0);
+    const bestScore = Math.max(...userScores.map((score) => score.score));
+    const averageAccuracy = (
+        userScores.reduce((sum, score) => sum + parseFloat(score.accuracy), 0) /
+        userScores.length
+    ).toFixed(2);
+
+    // Afficher les statistiques
+    document.getElementById("totalScore").textContent = totalScore;
+    document.getElementById("bestScore").textContent = bestScore;
+    document.getElementById("averageAccuracy").textContent = `${averageAccuracy}%`;
+</script>
+</body>
+</html>
