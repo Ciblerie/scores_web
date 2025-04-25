@@ -79,7 +79,7 @@
         <input type="password" id="password" placeholder="Entrez votre mot de passe" required />
         <button type="submit">Se connecter</button>
         <div class="switch-link">
-            <a href="#" id="switchToSignup">Pas encore inscrit ? Créez un compte</a>
+            <a href="javascript:void(0);" id="switchToSignup">Pas encore inscrit ? Créez un compte</a>
         </div>
     </form>
 </div>
@@ -96,9 +96,27 @@
         <input type="password" id="signupConfirmPassword" placeholder="Confirmez votre mot de passe" required />
         <button type="submit">S'inscrire</button>
         <div class="switch-link">
-            <a href="#" id="switchToLogin">Déjà inscrit ? Connectez-vous</a>
+            <a href="javascript:void(0);" id="switchToLogin">Déjà inscrit ? Connectez-vous</a>
         </div>
     </form>
 </div>
+
+<script>
+    // Script de bascule entre Connexion et Inscription
+    const loginSection = document.getElementById("loginSection");
+    const signupSection = document.getElementById("signupSection");
+
+    document.getElementById("switchToSignup").addEventListener("click", (event) => {
+        event.preventDefault(); // Empêche l'action par défaut du lien
+        loginSection.style.display = "none";
+        signupSection.style.display = "block";
+    });
+
+    document.getElementById("switchToLogin").addEventListener("click", (event) => {
+        event.preventDefault(); // Empêche l'action par défaut du lien
+        signupSection.style.display = "none";
+        loginSection.style.display = "block";
+    });
+</script>
 </body>
 </html>
