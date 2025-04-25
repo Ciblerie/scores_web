@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mon Compte</title>
+    <style>
+        body {
+          background: linear-gradient(135deg, #1d4ed8, #2563eb);
+          font-family: Arial, sans-serif;
+          color: #fff;
+          text-align: center;
+          padding: 20px;
+        }
+        h1 {
+          margin-bottom: 20px;
+          font-size: 24px;
+        }
+        form {
+          margin: 20px auto;
+          width: 300px;
+          text-align: left;
+        }
+        label {
+          font-size: 14px;
+          display: block;
+          margin-bottom: 5px;
+        }
+        input {
+          width: 100%;
+          padding: 10px;
+          margin-bottom: 15px;
+          border: none;
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
+        button {
+          width: 100%;
+          padding: 10px;
+          font-size: 16px;
+          border: none;
+          border-radius: 4px;
+          color: #fff;
+          background: rgba(255, 255, 255, 0.3);
+          cursor: pointer;
+        }
+        button:hover {
+          background: rgba(255, 255, 255, 0.4);
+        }
+        a {
+          margin-top: 20px;
+          display: inline-block;
+          text-decoration: none;
+          font-size: 16px;
+          color: #fff;
+          background: rgba(255, 255, 255, 0.2);
+          padding: 10px 20px;
+          border-radius: 4px;
+        }
+        a:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+        .scores {
+          margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<h1>🔑 Mon Compte</h1>
+
+<!-- Formulaire de connexion -->
+<form id="loginForm">
+    <label for="username">Pseudo :</label>
+    <input type="text" id="username" placeholder="Entrez votre pseudo" required />
+    <label for="password">Mot de passe :</label>
+    <input type="password" id="password" placeholder="Entrez votre mot de passe" required />
+    <button type="submit">Se connecter</button>
+</form>
+
+<!-- Scores personnels -->
+<div class="scores" id="personalScores" style="display: none;">
+    <h2>📊 Vos performances</h2>
+    <p>Bienvenue, <span id="playerName"></span> !</p>
+    <ul id="scoreList">
+        <!-- Les scores personnels seront affichés ici -->
+    </ul>
+</div>
+
+<!-- Lien retour -->
+<a href="index.html">🏠 Retour au classement</a>
+
+<script>
+    const personalScores = document.getElementById("personalScores");
+    const loginForm = document.getElementById("loginForm");
+
+    // Simuler une connexion
+    loginForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const username = document.getElementById("username").value;
+
+        // Simuler des scores personnels
+        const scores = [
+            { date: "2025-04-20", score: 150 },
+            { date: "2025-04-21", score: 180 },
+            { date: "2025-04-22", score: 200 },
+        ];
+
+        document.getElementById("playerName").innerText = username;
+        const scoreList = document.getElementById("scoreList");
+        scoreList.innerHTML = scores
+            .map((s) => `<li>${s.date} - ${s.score} points</li>`)
+            .join("");
+
+        loginForm.style.display = "none";
+        personalScores.style.display = "block";
+    });
+</script>
+</body>
+</html>
