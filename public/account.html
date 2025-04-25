@@ -140,11 +140,18 @@
         loginSection.style.display = "block";
     });
 
-    // Simuler une connexion
+    // Simuler une connexion et redirection
     document.getElementById("loginForm").addEventListener("submit", (event) => {
         event.preventDefault();
         const username = document.getElementById("username").value;
-        alert(`Bienvenue, ${username} ! Connexion réussie.`);
+        const password = document.getElementById("password").value;
+
+        if (username && password) {
+            alert(`Bienvenue, ${username} ! Connexion réussie.`);
+            window.location.href = "dashboard.html"; // Redirige vers la page "dashboard.html"
+        } else {
+            alert("Veuillez remplir tous les champs.");
+        }
     });
 </script>
 </body>
