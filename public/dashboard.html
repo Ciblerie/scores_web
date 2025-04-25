@@ -99,21 +99,15 @@
             padding: 10px;
             border: none;
             text-align: center;
-            width: 20%; /* Équilibrage des colonnes */
         }
 
         th {
             background: rgba(255, 255, 255, 0.3);
-            font-size: 16px;
+            font-size: 16px; /* Uniformisation de la taille de police pour tous les en-têtes */
         }
 
         td {
             font-size: 14px;
-        }
-
-        /* Ajustement spécifique de la police pour la colonne "Date" */
-        th:nth-child(3), td:nth-child(3) {
-            font-size: 12px; /* Réduction de la taille de la police dans "Date" */
         }
 
         .days-in-rank {
@@ -142,7 +136,7 @@
         <tr>
             <th>Position</th>
             <th>Jours dans le rang</th>
-            <th>Date</th>
+            <th>Date</th> <!-- Taille de police uniformisée -->
             <th>Pseudo</th>
             <th>Score</th>
         </tr>
