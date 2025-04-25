@@ -110,6 +110,15 @@
             font-size: 14px;
         }
 
+        /* Ajustement spécifique des colonnes */
+        th:nth-child(2), td:nth-child(2) {
+            width: 10%; /* Réduction de la largeur de "Jours dans le rang" */
+        }
+
+        th:nth-child(3), td:nth-child(3) {
+            width: 15%; /* Réduction de la largeur de "Date" */
+        }
+
         .days-in-rank {
             color: #ff0; /* Couleur jaune pour les jours dans le rang */
         }
@@ -130,7 +139,7 @@
     <button onclick="logout()">🔒 Déconnexion</button>
 </header>
 <main>
-    <h2>🏆 Classement des joueurs</h2> <!-- Trophée réintégré -->
+    <h2>🏆 Classement des joueurs</h2>
     <table>
         <thead>
         <tr>
