@@ -99,6 +99,7 @@
             padding: 10px;
             border: none;
             text-align: center;
+            width: 20%; /* Équilibrage des colonnes */
         }
 
         th {
@@ -110,13 +111,9 @@
             font-size: 14px;
         }
 
-        /* Ajustement spécifique des colonnes */
-        th:nth-child(1), td:nth-child(1) {
-            width: 5%; /* Réduction de la largeur de "Position" */
-        }
-
-        th:nth-child(2), td:nth-child(2) {
-            width: 20%; /* Augmentation de la largeur de "Jours dans le rang" */
+        /* Ajustement spécifique de la police pour la colonne "Date" */
+        th:nth-child(3), td:nth-child(3) {
+            font-size: 12px; /* Réduction de la taille de la police dans "Date" */
         }
 
         .days-in-rank {
