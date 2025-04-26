@@ -52,22 +52,17 @@
             font-size: 14px;
         }
 
-        .small-date {
-            font-size: 10px;
-            opacity: 0.7;
-        }
-
-        .days-in-rank, .best-rank {
-            color: #ff0; /* Couleur jaune */
-            width: 10%; /* Taille identique pour "Jours dans le rang" et "Meilleure place" */
+        /* Équilibrage des colonnes */
+        .position, .days-in-rank, .best-rank, .small-date {
+            width: 15%; /* Largeur équilibrée pour ces colonnes */
         }
 
         .pseudo {
-            width: 25%; /* Équilibrage pour "Pseudo" */
+            width: 25%; /* Maintien de la largeur pour "Pseudo" */
         }
 
         .score {
-            width: 25%; /* Équilibrage pour "Score" */
+            width: 25%; /* Maintien de la largeur pour "Score" */
         }
     </style>
 </head>
@@ -80,10 +75,10 @@
     <table>
         <thead>
         <tr>
-            <th>Position</th>
+            <th class="position">Position</th>
             <th class="days-in-rank">Jours dans le rang</th>
             <th class="best-rank">Meilleure place</th>
-            <th>Date</th>
+            <th class="small-date">Date</th>
             <th class="pseudo">Pseudo</th>
             <th class="score">Score</th>
         </tr>
@@ -150,7 +145,7 @@
 
                     // Ajouter une ligne au tableau
                     row.innerHTML = `
-                        <td>${index + 1}</td>
+                        <td class="position">${index + 1}</td>
                         <td class="days-in-rank">${playerStats[entry.pseudo].daysInRank || '-'}</td>
                         <td class="best-rank">${playerStats[entry.pseudo].bestRank || '-'}</td>
                         <td class="small-date">${date}</td>
