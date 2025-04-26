@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Classement des scores</title>
+    <style>
+        body {
+          background: linear-gradient(135deg, #1d4ed8, #2563eb);
+          font-family: Arial, sans-serif;
+          color: #fff;
+          text-align: center;
+          padding: 20px;
+        }
+        .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+        .header h1 {
+          flex: 1;
+          font-size: 24px;
+          text-align: center; /* Centrer horizontalement le titre */
+          margin: 0;
+        }
+        .login-button {
+          text-decoration: none;
+          font-size: 16px;
+          color: #fff;
+          background: rgba(255, 255, 255, 0.2);
+          padding: 10px 20px;
+          border-radius: 4px;
+          transition: background 0.3s;
+        }
+        .login-button:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+        table {
+          margin: auto;
+          width: 80%;
+          border-collapse: collapse;
+          background: transparent;
+          color: #fff;
+        }
+        th, td {
+          padding: 8px;
+          border: none;
+          text-align: center;
+        }
+        th {
+          font-size: 16px;
+          background: rgba(255, 255, 255, 0.1);
+        }
+        td {
+          font-size: 14px;
+        }
+        th:first-child, td:first-child {
+          width: 10%; /* Colonne "Position" */
+        }
+        th:nth-child(2), td:nth-child(2) {
+          width: 15%; /* Réduction pour "Jours dans le rang" */
+        }
+        th:nth-child(3), td:nth-child(3) {
+          width: 25%; /* Ajustement pour "Date" */
+        }
+        th:nth-child(4), td:nth-child(4) {
+          width: 25%; /* Colonne "Pseudo" */
+        }
+        th:nth-child(5), td:nth-child(5) {
+          width: 25%; /* Augmentation pour "Score" */
+        }
+        .small-date {
+          font-size: 10px;
+          opacity: 0.7;
+        }
+        .days-in-rank {
+          font-size: 12px;
+          color: #ff0; /* Couleur jaune pour les jours dans le rang */
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>🏆 Classement des joueurs</h1>
+    <a href="account.html" class="login-button">Connexion</a>
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>Position</th>
+        <th>Jours dans le rang</th>
+        <th>Date</th>
+        <th>Pseudo</th>
+        <th>Score</th>
+    </tr>
+    </thead>
+    <tbody id="scoreTableBody">
+    <!-- Les lignes seront ajoutées ici dynamiquement -->
+    </tbody>
+</table>
+
+<script>
+    const apiUrl = "/scores"; // Endpoint API pour récupérer les scores
+    let currentScores = []; // Stocke les scores actuels pour détecter les changements
+    const topPlayersDays = {}; // Stocke les jours dans le rang pour les 3 premiers
+
+    async function loadScores() {
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        // Trier les scores par ordre décroissant
+        data.sort((a, b) => b.score - a.score);
+
+        // Vérifie si les scores ont changé avant d'actualiser
+        if (JSON.stringify(data) !== JSON.stringify(currentScores)) {
+          currentScores = data; // Met à jour les scores actuels
+          const tbody = document.getElementById("scoreTableBody");
+          tbody.innerHTML = ""; // Efface les anciennes lignes
+
+          const today = new Date().toISOString().split('T')[0]; // Date du jour au format YYYY-MM-DD
+
+          data.forEach((entry, index) => {
+            const row = document.createElement("tr");
+
+            // Convertir le timestamp au fuseau horaire de Paris (UTC+2 en été)
+            const date = new Intl.DateTimeFormat("fr-FR", {
+              timeZone: "Europe/Paris", // Fuseau horaire explicite
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            }).format(new Date(entry.timestamp));
+
+            // Si le joueur est dans le top 3, mettre à jour le compteur de jours
+            let daysInRank = "";
+            if (index < 3) {
+              if (!topPlayersDays[entry.pseudo]) {
+                // Nouveau joueur dans le top 3
+                topPlayersDays[entry.pseudo] = { lastUpdated: today, days: 1 };
+              } else if (topPlayersDays[entry.pseudo].lastUpdated !== today) {
+                // Incrémenter les jours si ce n'est pas encore mis à jour aujourd'hui
+                topPlayersDays[entry.pseudo].days += 1;
+                topPlayersDays[entry.pseudo].lastUpdated = today;
+              }
+              daysInRank = topPlayersDays[entry.pseudo].days; // Nombre de jours dans le rang
+            }
+
+            row.innerHTML = `
+              <td>${index + 1}</td>
+              <td class="days-in-rank">${daysInRank || '-'}</td> <!-- Jours dans le rang -->
+              <td class="small-date">${date}</td>
+              <td>${entry.pseudo || 'Anonyme'}</td>
+              <td>${entry.score}</td>
+            `;
+            tbody.appendChild(row);
+          });
+
+          // Nettoyer les joueurs qui ne sont plus dans le top 3
+          Object.keys(topPlayersDays).forEach(pseudo => {
+            if (!data.slice(0, 3).some(entry => entry.pseudo === pseudo)) {
+              delete topPlayersDays[pseudo];
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des scores :", error);
+      }
+    }
+
+    // Actualisation automatique toutes les 5 secondes
+    setInterval(loadScores, 5000);
+
+    // Charge automatiquement au démarrage
+    loadScores();
+</script>
+</body>
+</html>
