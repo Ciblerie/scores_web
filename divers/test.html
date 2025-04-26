@@ -1,165 +1,111 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Classement des scores</title>
-    <style>
-        body {
-          background: linear-gradient(135deg, #1d4ed8, #2563eb);
-          font-family: Arial, sans-serif;
-          color: #fff;
-          text-align: center;
-          padding: 20px;
-        }
-        .header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
-        }
-        .header h1 {
-          flex: 1;
-          font-size: 24px;
-          text-align: center; /* Centrer horizontalement le titre */
-          margin: 0;
-        }
-        .login-button {
-          text-decoration: none;
-          font-size: 16px;
-          color: #fff;
-          background: rgba(255, 255, 255, 0.2);
-          padding: 10px 20px;
-          border-radius: 4px;
-          transition: background 0.3s;
-        }
-        .login-button:hover {
-          background: rgba(255, 255, 255, 0.3);
-        }
-        table {
-          margin: auto;
-          width: 80%;
-          border-collapse: collapse;
-          background: transparent;
-          color: #fff;
-        }
-        th, td {
-          padding: 8px;
-          border: none;
-          text-align: center;
-        }
-        th {
-          font-size: 16px;
-          background: rgba(255, 255, 255, 0.1);
-        }
-        td {
-          font-size: 14px;
-        }
-        .small-date {
-          font-size: 10px;
-          opacity: 0.7;
-        }
-        .days-in-rank {
-          font-size: 12px;
-          color: #ff0; /* Couleur jaune pour les jours dans le rang */
-        }
-    </style>
-</head>
-<body>
-<div class="header">
-    <h1>🏆 Classement des joueurs</h1>
-    <a href="account.html" class="login-button">Connexion</a>
-</div>
-<table>
-    <thead>
-    <tr>
-        <th>Position</th>
-        <th>Jours dans le rang</th>
-        <th>Date</th>
-        <th>Pseudo</th>
-        <th>Score</th>
-    </tr>
-    </thead>
-    <tbody id="scoreTableBody">
-    <!-- Les lignes seront ajoutées ici dynamiquement -->
-    </tbody>
-</table>
+#include <WiFi.h>
+    #include <HTTPClient.h>
+    #include <time.h> // Pour obtenir l'heure via NTP
 
-<script>
-    const apiUrl = "/scores"; // Endpoint API pour récupérer les scores
-    let currentScores = []; // Stocke les scores actuels pour détecter les changements
-    const topPlayersDays = {}; // Stocke les jours dans le rang pour les 3 premiers
+    // Configuration WiFi
+    const char* ssid = "Livebox-9410"; // Remplacez par votre SSID WiFi
+    const char* password = "37322944"; // Remplacez par votre mot de passe WiFi
 
-    async function loadScores() {
-      try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
+    // Configuration Firestore API
+    const char* firestoreBaseUrl = "https://firestore.googleapis.com/v1/projects/ciblerie-2-0/databases/(default)/documents/scores"; // URL pour accéder à la collection `scores`
 
-        // Trier les scores par ordre décroissant
-        data.sort((a, b) => b.score - a.score);
+    // Configuration du serveur NTP pour l'heure UTC
+    const char* ntpServer = "pool.ntp.org";
+    const long gmtOffset_sec = 0;       // Décalage UTC (aucun décalage)
+    const int daylightOffset_sec = 0;  // Pas de décalage pour UTC
 
-        // Vérifie si les scores ont changé avant d'actualiser
-        if (JSON.stringify(data) !== JSON.stringify(currentScores)) {
-          currentScores = data; // Met à jour les scores actuels
-          const tbody = document.getElementById("scoreTableBody");
-          tbody.innerHTML = ""; // Efface les anciennes lignes
+    void setup() {
+    Serial.begin(115200);
+    connectToWiFi();
 
-          const today = new Date().toISOString().split('T')[0]; // Date du jour au format YYYY-MM-DD
+    // Configurer le serveur NTP pour UTC
+    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer); // Synchroniser avec le serveur NTP
+    Serial.println("⌛ Synchronisation de l'heure...");
 
-          data.forEach((entry, index) => {
-            const row = document.createElement("tr");
-
-            // Convertir le timestamp au fuseau horaire de Paris (UTC+2 en été)
-            const date = new Intl.DateTimeFormat("fr-FR", {
-              timeZone: "Europe/Paris", // Fuseau horaire explicite
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            }).format(new Date(entry.timestamp));
-
-            // Si le joueur est dans le top 3, mettre à jour le compteur de jours
-            let daysInRank = "";
-            if (index < 3) {
-              if (!topPlayersDays[entry.pseudo]) {
-                // Nouveau joueur dans le top 3
-                topPlayersDays[entry.pseudo] = { lastUpdated: today, days: 1 };
-              } else if (topPlayersDays[entry.pseudo].lastUpdated !== today) {
-                // Incrémenter les jours si ce n'est pas encore mis à jour aujourd'hui
-                topPlayersDays[entry.pseudo].days += 1;
-                topPlayersDays[entry.pseudo].lastUpdated = today;
-              }
-              daysInRank = topPlayersDays[entry.pseudo].days; // Nombre de jours dans le rang
-            }
-
-            row.innerHTML = `
-              <td>${index + 1}</td>
-              <td class="days-in-rank">${daysInRank || '-'}</td> <!-- Jours dans le rang -->
-              <td class="small-date">${date}</td>
-              <td>${entry.pseudo || 'Anonyme'}</td>
-              <td>${entry.score}</td>
-            `;
-            tbody.appendChild(row);
-          });
-
-          // Nettoyer les joueurs qui ne sont plus dans le top 3
-          Object.keys(topPlayersDays).forEach(pseudo => {
-            if (!data.slice(0, 3).some(entry => entry.pseudo === pseudo)) {
-              delete topPlayersDays[pseudo];
-            }
-          });
-        }
-      } catch (error) {
-        console.error("Erreur lors du chargement des scores :", error);
-      }
+    // Attendre que l'heure soit synchronisée
+    while (time(nullptr) < 100000) {
+    delay(100);
+    Serial.print(".");
     }
 
-    // Actualisation automatique toutes les 5 secondes
-    setInterval(loadScores, 5000);
+    // *** Début de la partie test pour l'envoi du pseudo et score ***
+    //
+    // Générer des valeurs aléatoires pour les tests
+    randomSeed(analogRead(15));
+    // Test rapide d'envoi des données
+    String testPseudo = "Nina"; // Pseudo
+    int testScore = random(5, 1000); // Score de 5 à 1000 en aléatoire pour les tests
+    sendScoreToFirestore(testPseudo, testScore);
+    //
+    // *** FIN de la partie test pour l'envoi du pseudo et score ***
+    }
 
-    // Charge automatiquement au démarrage
-    loadScores();
-</script>
-</body>
-</html>
+    void loop() {
+    // Boucle vide pour les tests
+    }
+
+    void connectToWiFi() {
+    Serial.println("⌛ Connexion au WiFi...");
+    WiFi.begin(ssid, password);
+
+    while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+    }
+
+    Serial.println("\n✅ Connecté au WiFi.");
+    Serial.print("Adresse IP locale : ");
+    Serial.println(WiFi.localIP());
+    }
+
+    String getCurrentTimestampUTC() {
+    struct tm timeinfo;
+    if (!getLocalTime(&timeinfo)) {
+    Serial.println("❌ Impossible d'obtenir l'heure UTC.");
+    return "";
+    }
+
+    // Formatter l'heure en ISO 8601 UTC
+    char buffer[30];
+    strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%SZ", &timeinfo);
+    return String(buffer);
+    }
+
+    void sendScoreToFirestore(String pseudo, int score) {
+    HTTPClient http;
+    http.begin(firestoreBaseUrl);
+    http.addHeader("Content-Type", "application/json");
+
+    // Obtenir le timestamp UTC actuel
+    String timestamp = getCurrentTimestampUTC();
+
+    if (timestamp == "") {
+    Serial.println("❌ Impossible d'envoyer les données. Timestamp non valide.");
+    return;
+    }
+
+    // Préparation des données JSON pour Firestore
+    String jsonData = "{"
+    "\"fields\": {"
+    "\"pseudo\": {\"stringValue\": \"" + pseudo + "\"},"
+    "\"score\": {\"integerValue\": " + String(score) + "},"
+    "\"timestamp\": {\"stringValue\": \"" + timestamp + "\"}"
+    "}"
+    "}";
+
+    Serial.println("📡 Envoi de score à Firestore...");
+    Serial.println("📄 Données : " + jsonData);
+
+    // Envoi de la requête POST
+    int httpResponseCode = http.POST(jsonData);
+
+    if (httpResponseCode > 0) {
+    Serial.println("✅ Données envoyées à Firestore avec succès.");
+    String response = http.getString();
+    Serial.println("📨 Réponse Firestore : \"" + response + "\"");
+    } else {
+    Serial.println("❌ Erreur lors de l'envoi : " + String(httpResponseCode));
+    }
+
+    http.end();
+    }
