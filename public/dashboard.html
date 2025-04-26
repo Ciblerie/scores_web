@@ -58,9 +58,9 @@
             opacity: 0.7;
         }
 
-        .days-in-rank {
-            color: #ff0; /* Couleur jaune pour les jours dans le rang */
-            width: 10%; /* Réduction pour "Jours dans le rang" */
+        .days-in-rank, .best-rank {
+            color: #ff0; /* Couleur jaune */
+            width: 10%; /* Taille identique pour "Jours dans le rang" et "Meilleur place" */
         }
 
         .score {
@@ -79,7 +79,8 @@
         <tr>
             <th>Position</th>
             <th class="days-in-rank">Jours dans le rang</th>
-            <th>Date</th> <!-- Colonne "Date" mise à jour -->
+            <th class="best-rank">Meilleur place</th>
+            <th>Date</th>
             <th>Pseudo</th>
             <th class="score">Score</th>
         </tr>
@@ -92,7 +93,7 @@
 <script>
     const apiUrl = "/scores"; // Endpoint API pour récupérer les scores
     let currentScores = []; // Stocke les scores actuels pour détecter les changements
-    const topPlayersDays = {}; // Stocke les jours dans le rang pour les 3 premiers
+    const playerStats = {}; // Stocke les statistiques des joueurs (jours dans le rang, meilleure place)
 
     async function loadScores() {
         try {
@@ -113,7 +114,7 @@
                 data.forEach((entry, index) => {
                     const row = document.createElement("tr");
 
-                    // Formatage de la date (copié de home.html)
+                    // Formatage de la date
                     const date = new Intl.DateTimeFormat("fr-FR", {
                         timeZone: "Europe/Paris",
                         year: "numeric",
@@ -123,33 +124,37 @@
                         minute: "2-digit",
                     }).format(new Date(entry.timestamp));
 
-                    // Si le joueur est dans le top 3, mettre à jour le compteur de jours
-                    let daysInRank = "";
-                    if (index < 3) {
-                        if (!topPlayersDays[entry.pseudo]) {
-                            topPlayersDays[entry.pseudo] = { lastUpdated: today, days: 1 };
-                        } else if (topPlayersDays[entry.pseudo].lastUpdated !== today) {
-                            topPlayersDays[entry.pseudo].days += 1;
-                            topPlayersDays[entry.pseudo].lastUpdated = today;
+                    // Mettre à jour les statistiques du joueur
+                    if (!playerStats[entry.pseudo]) {
+                        playerStats[entry.pseudo] = {
+                            bestRank: index + 1,
+                            daysInRank: 1,
+                            lastUpdated: today,
+                        };
+                    } else {
+                        // Meilleure place
+                        playerStats[entry.pseudo].bestRank = Math.min(
+                            playerStats[entry.pseudo].bestRank,
+                            index + 1
+                        );
+
+                        // Jours dans le rang
+                        if (playerStats[entry.pseudo].lastUpdated !== today) {
+                            playerStats[entry.pseudo].daysInRank += 1;
+                            playerStats[entry.pseudo].lastUpdated = today;
                         }
-                        daysInRank = topPlayersDays[entry.pseudo].days;
                     }
 
+                    // Ajouter une ligne au tableau
                     row.innerHTML = `
                         <td>${index + 1}</td>
-                        <td class="days-in-rank">${daysInRank || '-'}</td>
-                        <td class="small-date">${date}</td> <!-- Colonne "Date" mise à jour -->
+                        <td class="days-in-rank">${playerStats[entry.pseudo].daysInRank || '-'}</td>
+                        <td class="best-rank">${playerStats[entry.pseudo].bestRank || '-'}</td>
+                        <td class="small-date">${date}</td>
                         <td>${entry.pseudo || 'Anonyme'}</td>
                         <td class="score">${entry.score}</td>
                     `;
                     tbody.appendChild(row);
-                });
-
-                // Nettoyer les joueurs qui ne sont plus dans le top 3
-                Object.keys(topPlayersDays).forEach(pseudo => {
-                    if (!data.slice(0, 3).some(entry => entry.pseudo === pseudo)) {
-                        delete topPlayersDays[pseudo];
-                    }
                 });
             }
         } catch (error) {
