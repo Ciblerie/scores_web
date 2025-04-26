@@ -52,21 +52,19 @@
             font-size: 14px;
         }
 
-        /* Équilibrage des colonnes */
-        .position, .days-in-rank, .best-rank, .small-date {
-            width: 15%; /* Largeur équilibrée pour ces colonnes */
+        /* Style pour la colonne "Date" (copié de home.html) */
+        .small-date {
+            font-size: 10px;
+            opacity: 0.7;
         }
 
-        .pseudo {
-            width: 25%; /* Maintien de la largeur pour "Pseudo" */
+        .days-in-rank, .best-rank {
+            color: #ff0; /* Couleur jaune */
+            width: 10%; /* Taille identique pour "Jours dans le rang" et "Meilleur place" */
         }
 
         .score {
-            width: 25%; /* Maintien de la largeur pour "Score" */
-        }
-
-        .highlight {
-            font-weight: bold; /* Exemple de classe pour mise en évidence */
+            width: 30%; /* Augmentation pour "Score" */
         }
     </style>
 </head>
@@ -79,11 +77,11 @@
     <table>
         <thead>
         <tr>
-            <th class="position">Position</th>
+            <th>Position</th>
             <th class="days-in-rank">Jours dans le rang</th>
-            <th class="best-rank">Meilleure place</th>
-            <th class="small-date">Date</th>
-            <th class="pseudo">Pseudo</th>
+            <th class="best-rank">Meilleur place</th>
+            <th>Date</th>
+            <th>Pseudo</th>
             <th class="score">Score</th>
         </tr>
         </thead>
@@ -149,11 +147,11 @@
 
                     // Ajouter une ligne au tableau
                     row.innerHTML = `
-                        <td class="position">${index + 1}</td>
+                        <td>${index + 1}</td>
                         <td class="days-in-rank">${playerStats[entry.pseudo].daysInRank || '-'}</td>
                         <td class="best-rank">${playerStats[entry.pseudo].bestRank || '-'}</td>
                         <td class="small-date">${date}</td>
-                        <td class="pseudo">${entry.pseudo || 'Anonyme'}</td>
+                        <td>${entry.pseudo || 'Anonyme'}</td>
                         <td class="score">${entry.score}</td>
                     `;
                     tbody.appendChild(row);
